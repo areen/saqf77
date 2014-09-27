@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>مركز السقاف لطب وجراحة العيون</title>
+        <link rel="icon" type="image/png"  href="http://graythemes.com/sahar_test/2/favicon.ico">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script type="text/javascript" src="http://graythemes.com/sahar_test/2/javascript/head.js"></script>
+        <script type="text/javascript" src=http://graythemes.com/sahar_test/2/"javascript/jquery.min.js"></script>
+        <link href="http://graythemes.com/sahar_test/2/news/styles/ticker-style.css" rel="stylesheet" type="text/css" />
+<script src="http://graythemes.com/sahar_test/2/news/includes/jquery.ticker.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="http://graythemes.com/sahar_test/2/styles/screen.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="http://graythemes.com/sahar_test/2/styles/print.css" media="print">
+		<link rel="shortcut icon" href=http://graythemes.com/sahar_test/2/"favicon.ico" type="image/x-icon">
+        
+        <style type="text/css" >
+		#contact input { width: 220px; background-color:#d9d9d9 }
+		</style>
+	</head>
+	<body>
+    
+    <?php
+include("http://graythemes.com/sahar_test/2/config.php");
+include("http://graythemes.com/sahar_test/2/include/lib.php");
+include("http://graythemes.com/sahar_test/2/include/func.php");
+$micro = new Mohabco();
+$db=new db();
+
+// get the IP of the visitor
+  $ip = $_SERVER['REMOTE_ADDR'];
+
+  // store the IP address into the table that holds the info about the users that visited the site today
+  mysql_query("INSERT IGNORE INTO `unique` (`day`, `ip`) VALUES (CURDATE(), '$ip')");
+
+  // store the IP address into the table that holds the info about the currently online users (if it already exists, update the timestamp)
+  mysql_query("INSERT INTO `online` (`ip`, `timestamp`) VALUES ('$ip', CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE timestamp=CURRENT_TIMESTAMP");
+
+  // delete the IP addresses that are no longer online (no update for longer than 5 minutes)
+  mysql_query("DELETE FROM `online` WHERE timestamp < NOW() - INTERVAL 5 MINUTE");
+
+
+?>
+		<div id="root">
+						<header id="top">
+				<h1><a href="./" accesskey="h">&nbsp;</a></h1>
+				<nav id="skip">
+					<ul>
+						<li><a href="#nav" accesskey="n">Skip to navigation (n)</a></li>
+						<li><a href="#content" accesskey="c">Skip to content (c)</a></li>
+						<li><a href="#footer" accesskey="f">Skip to footer (f)</a></li>
+					</ul>
+				</nav>
+                 
+				<nav id="nav">
+                
+                 <?=$micro->getModule('mod_main_menu')?>
+                 
+			
+            
+            <?=$micro->getModule('mod_news_bar')?>
+                    
+                     
+
+ <?=$micro->getModule('mod_top_menu')?>
+					
+                    
+                    
+				</nav>
+                <?php
+				$main_num_q=mysql_query('select * from day_articles where type=6 and publish=1 order by id DESC limit 1');
+				if (mysql_num_rows($main_num_q) > 0) {
+				$main_num_re=mysql_fetch_array($main_num_q);
+				
+				?>
+				<form action="./" method="post" id="search">
+					<fieldset>
+						<p>الرقم الموحد <span class="tel"><?=strip_tags(stripslashes($main_num_re['cont']))?></span></p>
+						
+					</fieldset>
+				</form>
+                <?php } ?>
+                
+              
+			</header>  
+            
+           
+ <?=$micro->getModule('mod_main_slider')?>
+
+ 	        
+			<section id="content">
+				<?=$micro->getModule('mod_home_department')?>
+				<div class="cols-c">
+                <?=$micro->getModule('mod_welcome_message')?>
+					
+					<aside class="news-d">
+                     <?=$micro->getModule('mod_home_form')?>
+						
+					</aside>
+				</div>
+			</section>
+            <?=$micro->getModule('mod_footer')?>
+			
+		</div>
+		<script type="text/javascript">
+			head.js('http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js','javascript/scripts.js','javascript/mobile.js')
+		</script>
+        <script type="text/javascript">
+    $(function () {
+        $('#js-news').ticker();
+    });
+</script>
+	</body>
+</html>
